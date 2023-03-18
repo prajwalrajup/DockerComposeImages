@@ -1,0 +1,18 @@
+# Redis with persisted data
+# docker-compose -f docker-compose-persisted.yml
+version: '3.8'
+services:
+  cache:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes: 
+      - cache:/data
+volumes:
+  cache:
+    driver: local
