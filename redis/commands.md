@@ -1,3 +1,6 @@
+# to connect to docker redis from local machine
+docker exec -it redis redis-cli
+
 # interactive redis cli 
 redis-cli
 
