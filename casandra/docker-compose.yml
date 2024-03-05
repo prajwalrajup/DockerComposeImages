@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  cassandra-client:
+    image: bitnami/cassandra:latest
+    container_name: cassandra-client
+    environment:
+      - CASSANDRA_USER=cassandra
+      - CASSANDRA_PASSWORD=cassandra
+    # command: cqlsh --username cassandra --password cassandra cassandra-server
