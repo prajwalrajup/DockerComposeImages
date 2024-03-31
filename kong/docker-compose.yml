@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  kong-migrations:
+    image: "${KONG_DOCKER_TAG:-kong:latest}"
+    command: kong migrations bootstrap
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: kong
+      KONG_PG_HOST: localhost
+      KONG_PG_PASSWORD: test 
+      KONG_PG_USER: test
+    networks:
+      - internalNetwork
+    restart: on-failure
+ 
+  konga:
+    image: pantsel/konga
+    container_name: konga
+    depends_on:
+      - kong
+    environment:
+      NODE_ENV: production
+    links:
+      - kong:kong
+    networks:
+      - internalNetwork
+    ports:
+      - "1337:1337/tcp"
+    restart: on-failure
+    volumes:
+      - ./kong/kongadata:/app/kongadata
+ 
+  kong:
+    image: "${KONG_DOCKER_TAG:-kong:latest}"
+    container_name: kong
+    user: "${KONG_USER:-root}"
+    environment:
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: kong
+      KONG_PG_HOST: localhost
+      KONG_PG_PASSWORD: test
+      KONG_PG_USER: test
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+    networks:
+      - internalNetwork
+    ports:
+      - "8000:8000/tcp"
+      - "8001:8001/tcp"
+    restart: on-failure
